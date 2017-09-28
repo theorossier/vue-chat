@@ -6,7 +6,7 @@
     <p><i>{{seconds}}s</i></p>
     <form @submit.prevent="onSubmit">
       <p class="error" v-if="error">The username is invalid</p>
-      <input type="text" placeholder="username" v-model="username" v-on:input="speed(username)">
+      <input type="text" placeholder="username" v-model="username" v-on:input="typing(username)">
       <button>Login</button>
       <p>Pas le droit à l'échec, pas d'espace, moins d'une demi seconde</p>
     </form>
@@ -25,7 +25,12 @@
         startDate: '',
         seconds: 0,
         timeCeil: 0.5,
-        timeMessage: ''
+        timeMessage: '',
+        speedIntensity: {
+          speed: 0,
+          oldMessageLength: 0,
+          messageTimeout: false
+        }
       }
     },
     methods: {
@@ -42,12 +47,15 @@
         // ResetProperties
         this.resetAllTimeProperties()
       },
-      speed (value) {
-        console.log(value.length)
+
+      typing (value) {
+        // speed intensity
+        // this.calcSpeed(value)
+        // Chrono ERROR
         if (!value.match(/^\w{1,1500}$/) || value.length < this.charCount) { // Matching and no delete
-          console.log('terminé')
           this.resetAllTimeProperties()
           return
+        // Chrono START
         } else if (value.length > 0) {
           this.charCount ++
           if (!this.startTime) {
@@ -77,11 +85,35 @@
         }, 1000)
       },
       resetAllTimeProperties () {
-        this.username = ''
         this.charCount = 0
         this.startTime = false
         this.startDate = ''
+        this.username = ''
+      },
+      calcSpeed (value) {
+        if (!this.speedIntensity.messageTimeout) {
+          console.log('coucou')
+          let interval = setInterval(() => {
+            let newMessageLength = value.length
+            this.speedIntensity.speed = newMessageLength - this.speedIntensity.oldMessageLength
+            this.speedIntensity.oldMessageLength += newMessageLength
+            console.log(this.speedIntensity.speed)
+          }, 100)
+          this.speedIntensity.messageTimeout = interval
+          return
+        } else if (this.speedIntensity.speed < 1) {
+          console.log('pas coucou')
+          this.speedIntensity.messageTimeout = false
+          clearInterval(this.speedIntensity.messageTimeout)
+        }
       }
+    },
+    created () {
+      this.$store.$watch('user', (user) => {
+        if (user.id) {
+          this.$router.push('/')
+        }
+      })
     }
   }
 </script>

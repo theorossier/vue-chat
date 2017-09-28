@@ -4,7 +4,10 @@ import LoginComponent from 'components/views/Login'
 export default [
   {
     path: '/',
-    component: ChatComponent
+    component: ChatComponent,
+    meta: {
+      auth: true
+    }
   },
   {
     path: '/login',

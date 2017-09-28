@@ -1,27 +1,15 @@
 <template>
   <div id="app">
-    <h1 v-if="store.user.name">Bienvenue {{store.user.name}}</h1>
-    <router-view :store="store" @login="onLogin"></router-view>
+    <h1 v-if="$store.user.username">Bienvenue {{$store.user.username}}</h1>
+    <router-view :store="$store" @login="onLogin"></router-view>
   </div>
 </template>
 
 <script>
 export default {
-  data () {
-    return {
-      store: {
-        user: {}, // User information
-        users: ['Franco', 'Marine'], // User list
-        messages: ['Hello', 'Hello'] // Message list
-      }
-    }
-  },
   methods: {
     onLogin (username) {
-      console.log(username)
-      this.store.user = {
-        name: username
-      }
+      this.connect(username)
     }
   }
 }

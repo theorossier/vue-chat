@@ -3,9 +3,14 @@
 import Vue from 'vue'
 import Bourgeon from 'bourgeon'
 import App from './App'
+import dataManager from './dataManager'
 
 Vue.use(Bourgeon, {
   locales: ['fr', 'en']
+})
+
+Vue.use(dataManager, {
+  api: 'https://bddi-chat2017.herokuapp.com/'
 })
 
 /* eslint-disable no-new */
