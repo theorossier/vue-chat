@@ -43,6 +43,7 @@
         this.resetAllTimeProperties()
       },
       speed (value) {
+        console.log(value.length)
         if (!value.match(/^\w{1,1500}$/) || value.length < this.charCount) { // Matching and no delete
           console.log('terminé')
           this.resetAllTimeProperties()
@@ -73,7 +74,7 @@
         }
         setTimeout(() => {
           this.timeMessage = ''
-        }, 15000)
+        }, 1000)
       },
       resetAllTimeProperties () {
         this.username = ''
