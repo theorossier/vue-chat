@@ -1,167 +1,89 @@
 <template>
-  <div class="form">
-    <transition name="message">
-      <p class="showmessage"v-if="timeMessage">{{timeMessage}}</p>
-    </transition>
-    <p><i>{{seconds}}s</i></p>
-    <form @submit.prevent="onSubmit">
-      <p class="error" v-if="error">The username is invalid</p>
-      <input type="text" placeholder="username" v-model="username" v-on:input="typing(username)">
-      <button>Login</button>
-      <p>Pas le droit à l'échec, pas d'espace, moins d'une demi seconde</p>
-    </form>
-  </div>
+  <main class="login">
+    <img class="logo" src="../../assets/logo.png" alt="">
+    <login-form></login-form>
+    <!-- <div class="word-animation-wrapper">
+      <div class="word-animation-group">
+        <span aria-hidden="true"><p class="message">Règle: Pas l'temps d'niaiser, t'as une seconde pour taper</p></span>
+      </div>
+    </div> -->
+  </main>
 </template>
 
 
 <script>
+  // Imports
+  import LoginForm from 'components/LoginForm'
+  // Component
   export default {
-    data () {
-      return {
-        error: false,
-        username: '',
-        charCount: 0,
-        startTime: false,
-        startDate: '',
-        seconds: 0,
-        timeCeil: 0.5,
-        timeMessage: '',
-        speedIntensity: {
-          speed: 0,
-          oldMessageLength: 0,
-          messageTimeout: false
-        }
-      }
-    },
-    methods: {
-      onSubmit (e) {
-        // Stop chrono
-        this.stopChrono()
-        // Validation
-        if (!this.username.match(/^\w{1,15}$/)) {
-          this.error = true
-        } else if (this.seconds < this.timeCeil) {
-          this.error = false
-          this.$emit('login', this.username)
-        }
-        // ResetProperties
-        this.resetAllTimeProperties()
-      },
-
-      typing (value) {
-        // speed intensity
-        // this.calcSpeed(value)
-        // Chrono ERROR
-        if (!value.match(/^\w{1,1500}$/) || value.length < this.charCount) { // Matching and no delete
-          this.resetAllTimeProperties()
-          return
-        // Chrono START
-        } else if (value.length > 0) {
-          this.charCount ++
-          if (!this.startTime) {
-            this.startTime = true
-            this.startChrono()
-          }
-        }
-      },
-      startChrono () {
-        this.startDate = new Date()
-        console.log('start')
-      },
-      stopChrono () {
-        let endDate = new Date()
-        this.seconds = (endDate.getTime() - this.startDate.getTime()) / 1000
-        // Show Message
-        this.showTimeMessage()
-      },
-      showTimeMessage () {
-        if (this.seconds < this.timeCeil) {
-          this.timeMessage = 'Too Faaast'
-        } else {
-          this.timeMessage = 'Too Bad'
-        }
-        setTimeout(() => {
-          this.timeMessage = ''
-        }, 1000)
-      },
-      resetAllTimeProperties () {
-        this.charCount = 0
-        this.startTime = false
-        this.startDate = ''
-        this.username = ''
-      },
-      calcSpeed (value) {
-        if (!this.speedIntensity.messageTimeout) {
-          console.log('coucou')
-          let interval = setInterval(() => {
-            let newMessageLength = value.length
-            this.speedIntensity.speed = newMessageLength - this.speedIntensity.oldMessageLength
-            this.speedIntensity.oldMessageLength += newMessageLength
-            console.log(this.speedIntensity.speed)
-          }, 100)
-          this.speedIntensity.messageTimeout = interval
-          return
-        } else if (this.speedIntensity.speed < 1) {
-          console.log('pas coucou')
-          this.speedIntensity.messageTimeout = false
-          clearInterval(this.speedIntensity.messageTimeout)
-        }
-      }
-    },
-    created () {
-      this.$store.$watch('user', (user) => {
-        if (user.id) {
-          this.$router.push('/')
-        }
-      })
+    components: {
+      LoginForm
     }
   }
 </script>
 
 <style lang="stylus" scoped>
+  .login
+    display flex
+    flex-direction column
+    justify-content center
+    background-image url('../../assets/grid.png')
+    background-repeat no-repeat
+    background-position center
+    background-size cover
+    background-color darkblue
 
-  .form {
-    width: 100vw;
-  }
+    :after
+      content: ''
+      position fixed
+      top 60px
+      left 60px
+      right 60px
+      bottom 60px
+      border 1px solid
+      border-color #ffffff
+      box-shadow 0 0 0 1px neonblue
+      filter: drop-shadow(0 0 1px neonblue);
+      border-color white
+      pointer-events none
+      z-index -1
 
-  .showmessage {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    display: inline-block;
-    width: 100%;
-    font-family: 'Yellowtail', cursive;
-    font-size: 8em;
-    line-height: 0;
-    text-align: center;
-    color: #2200fc;
-    filter: drop-shadow(0 0 30px #2200fc);
-    transform-origin: center;
-    transform: translate(-50%, -50%) rotate(-5deg);
-    z-index: 10;
-    margin: 0;
-  }
+  .logo
+    position relative
+    width 100%
+    max-width 980px
+    padding 0 40px
+    margin 0 auto 70px
+    z-index 2
 
-  .error {
-    color: red
-  }
+  .word-animation
 
-  .message-enter-active,
-  .message-leave-active {
-    transition: opacity .5s, transform .5s;
-  }
+    &-wrapper
+      position: absolute
+      left: 50%
+      bottom: 80px
+      width calc(100% - 160px)
+      overflow hidden
+      transform translate(-50%)
+      pointer-events none
 
-  .message-leave {
-    opacity: 1;
-    transform: translate(-50%, -50%) rotate(-5deg) scale(1);
-  }
-  .message-enter-to {
-    transform: translate(-50%, -50%) rotate(-5deg) scale(1);
-  }
+    &-group
+      display: block
+      position: relative
+      float: left
+      margin: 0
+      white-space: nowrap
+      -webkit-animation: translate-keywords linear 25s infinite
+      animation: translate-keywords linear 25s infinite
 
-  .message-enter,
-  .message-leave-to /* .fade-leave-active below version 2.1.8 */ {
-    opacity: 0;
-    transform: translate(-50%, -50%) rotate(-5deg) scale(3);
-  }
+      span
+        display: inline-block
+        padding-right: 10rem
+
+  @keyframes translate-keywords
+    0%
+      transform: translateX(100vw)
+    100%
+      transform: translateX(-650px)
+
 </style>

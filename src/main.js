@@ -4,6 +4,7 @@ import Vue from 'vue'
 import Bourgeon from 'bourgeon'
 import App from './App'
 import dataManager from './dataManager'
+import inputManager from './inputManager'
 
 Vue.use(Bourgeon, {
   locales: ['fr', 'en']
@@ -12,6 +13,8 @@ Vue.use(Bourgeon, {
 Vue.use(dataManager, {
   api: 'https://bddi-chat2017.herokuapp.com/'
 })
+
+Vue.use(inputManager)
 
 /* eslint-disable no-new */
 new Vue({
